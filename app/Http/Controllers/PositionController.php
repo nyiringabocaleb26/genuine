@@ -16,7 +16,7 @@ class PositionController extends Controller
             "PostName" => 'required|string|min:3|max:50'
         ]);
         Position::create($req->all());
-        return redirect()->route('dashboard')->with('success', 'Position added successfully');
+        return redirect()->route('position.list')->with('success', 'Position added successfully');
     }
 
     public function getPositions(){

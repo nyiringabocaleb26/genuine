@@ -16,6 +16,9 @@
                 <input class="w-full py-2 px-4 bg-blue-500 text-white rounded-lg cursor-pointer hover:bg-blue-600" 
                     type="submit" value="Login">
             </div>
+            <div class="mt-4 text-center">
+                <p class="text-sm">Don't have an account? <a href="{{ route('signup') }}" class="text-blue-500">Sign Up</a></p>
+            </div>
         </form>
     </div>
 @endsection

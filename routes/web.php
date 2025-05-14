@@ -16,10 +16,12 @@ Route::post('/adminRegister', [AdminController::class,'store'])->name('signup');
 Route::get('/login', [AdminController::class,'showLogin'])->name('login');
 Route::post('/login', [AdminController::class,'login'])->name('login');
 //dashboard
+Route::middleware('auth')->group(function(){
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+});
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
 
 //position
 Route::get('/position',[PositionController::class,'index'])->name('position');

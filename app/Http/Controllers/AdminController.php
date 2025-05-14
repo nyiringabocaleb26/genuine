@@ -22,7 +22,7 @@ class AdminController extends Controller
         $hash = password_hash($req->Password, PASSWORD_BCRYPT);
         $req->merge(['Password' => $hash]);
         Admin::create($req->all());
-        return redirect()->route('home')->with('success', 'Admin registered successfully');
+        return redirect()->route('dashboard')->with('success', 'Admin registered successfully');
     }
 
     public function showLogin(){
@@ -45,7 +45,7 @@ class AdminController extends Controller
 
     public function logout(){
         session()->forget('admin_id');
-        return redirect()->route('login')->with('success', 'Logout successful');
+        return redirect()->route('home')->with('success', 'Logout successful');
     }
 }
 
