@@ -16,4 +16,5 @@
             </tbody>
         </table>
     </div>
+    <a href="{{ route('pdf') }} ">Print</a>
 @endsection

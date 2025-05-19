@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redirect;
 
 class AdminController extends Controller
 {
@@ -19,9 +21,11 @@ class AdminController extends Controller
             "Username" => 'required|string',
             "Password" => 'required|string|min:5'
         ]);
-        $hash = password_hash($req->Password, PASSWORD_BCRYPT);
-        $req->merge(['Password' => $hash]);
-        Admin::create($req->all());
+    
+        Admin::create([
+            'Username' => $req->Username,
+            'Password' => Hash::make($req->Password),
+        ]);
         return redirect()->route('dashboard')->with('success', 'Admin registered successfully');
     }
 
@@ -29,23 +33,38 @@ class AdminController extends Controller
         return view('users.login');
     }
 
-    public function login(Request $req)
-    {
-        $admin = Admin::where('Username', $req->Username)->first();
-        if ($admin && password_verify($req->Password, $admin->getAuthPassword())) {
-            session(['admin_id' => $admin->id]);
+    // public function showLoginForm()
+    // {
+    //     return view('admin.auth.login'); // Create a login form for admins
+    // }
 
-            return redirect('dashboard')->with('success', 'Login successful');
+    public function login(Request $request)
+    {
+        // Validate the request data
+        $credentials =  $request->validate([
+            'Username' => 'required|string',
+            'Password' => 'required',
+        ]);
+
+        if (Auth::guard('admin')->attempt($credentials)) {
+            // Authentication successful for admin
+            $request->session()->regenerate();
+            return Redirect::route('dashboard');
         }
 
+        // Authentication failed
         return back()->withErrors([
-            'Username' => 'The provided credentials do not match any user.',
+            'Username' => 'Invalid credentials.',
+            'Password' => 'Invalid credentials.',
         ]);
     }
 
-    public function logout(){
-        session()->forget('admin_id');
-        return redirect()->route('home')->with('success', 'Logout successful');
+    public function logout(Request $request)
+    {
+        Auth::guard('admin')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerate();
+        return redirect('login'); // Redirect to admin login
     }
 }
 
